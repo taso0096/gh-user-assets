@@ -17,6 +17,11 @@ build_pw_cli() {
     echo "playwright-cli not found. install it with 'npm install -g @playwright/cli@latest'." >&2
     exit 1
   fi
+  # Pin the output dir for artifacts (snapshots, response bodies, etc.).
+  # Without this, playwright-cli creates a .playwright-cli dir under the
+  # current working directory. Override with GHUA_OUTPUT_DIR if needed.
+  export PLAYWRIGHT_MCP_OUTPUT_DIR="${GHUA_OUTPUT_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/gh-user-assets}"
+  mkdir -p "$PLAYWRIGHT_MCP_OUTPUT_DIR"
   pw_cli=(playwright-cli)
   [[ -n "$session_name" ]] && pw_cli+=(--session "$session_name")
 }
