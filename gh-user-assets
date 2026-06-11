@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+GHUA_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+usage() {
+  cat <<'EOF'
+gh user-assets - upload/download images on GitHub issues & PRs via playwright-cli
+
+Usage:
+  gh user-assets login  [--session <name>]
+
+  gh user-assets upload <file> [<file>...] --repo <owner/repo> (--issue <n> | --pr <n>)
+                        [--session <name>]
+
+  gh user-assets download --repo <owner/repo> (--issue <n> | --pr <n>)
+                        [--session <name>] [--output <dir>]
+  gh user-assets download <url> [<url>...]
+                        [--session <name>] [--output <dir>]
+
+Commands:
+  login     open a headed browser to log in to GitHub (run once)
+  upload    attach image files and print the uploaded asset URLs
+  download  download assets of an issue/PR, or the given asset URLs
+
+Options:
+  --repo <owner/repo>  target repository (required for upload / issue-download)
+  --issue <n>          target issue number
+  --pr <n>             target pull request number
+  --session <name>     playwright-cli session name (default: gh-user-assets)
+  --output <dir>       (download) output directory (default: current directory)
+EOF
+}
+
+cmd="${1:-}"
+[[ -n "$cmd" ]] && shift || true
+
+case "$cmd" in
+  login)
+    # shellcheck source=lib/common.sh
+    source "$GHUA_ROOT/lib/common.sh"
+    ghua_login "$@"
+    ;;
+  upload)
+    # shellcheck source=lib/common.sh
+    source "$GHUA_ROOT/lib/common.sh"
+    # shellcheck source=lib/upload.sh
+    source "$GHUA_ROOT/lib/upload.sh"
+    ghua_upload "$@"
+    ;;
+  download)
+    # shellcheck source=lib/common.sh
+    source "$GHUA_ROOT/lib/common.sh"
+    # shellcheck source=lib/download.sh
+    source "$GHUA_ROOT/lib/download.sh"
+    ghua_download "$@"
+    ;;
+  -h|--help|help|"")
+    usage
+    ;;
+  *)
+    echo "unknown command: $cmd" >&2
+    usage >&2
+    exit 1
+    ;;
+esac
