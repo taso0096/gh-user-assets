@@ -33,6 +33,14 @@ gh extension install taso0096/gh-user-assets
 gh extension install .
 ```
 
+### スキル
+
+[`npx skills`](https://www.npmjs.com/package/skills) 対応のスキルも同梱している。
+
+```bash
+npx skills add taso0096/gh-user-assets
+```
+
 ---
 
 ## ログイン
